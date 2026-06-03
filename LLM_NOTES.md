@@ -50,6 +50,6 @@ The frontend was updated to a clean, light Dribbble-style theme using a warm cla
 Phase 3 introduces advanced explainability summaries, recommendations, multi-tab navigation, JSON file storage persistence, and a Groq-powered AI Credit Advisor:
 1. **AI Powered Risk Summaries & Recommendations**: Rule-based paragraphs and actionable items generated on score calculation.
 2. **JSON Data Stores**: Local file logging to `history.json` and `audit_logs.json` exposed via HTTP GET endpoints.
-3. **Groq AI Chatbot Widget**: Primary `llama-3.1-8b-instant`, fallback `llama-3.3-70b-versatile` (`GROQ_API_KEY` in `backend/.env`) with score context injection.
+3. **Groq AI Chatbot Widget**: Primary `llama-3.1-8b-instant`, fallback `llama-3.3-70b-versatile`; full advisor knowledge base in `backend/app/data/advisor_knowledge.md` plus loaded user profile from audit logs.
 4. **Tabbed Card UI**: Main card split into Calculator, Scores History (click-to-inspect loads details), and Audit Logs.
 

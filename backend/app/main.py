@@ -24,6 +24,7 @@ import httpx
 
 from app.audit import log_score_request
 from app.database import init_db
+from app.knowledge_base import build_advisor_system_prompt
 from app.schemas import ScoreRequest, ScoreResponse, ChatRequest, ChatResponse
 from app.scoring import compute_score
 
@@ -64,8 +65,8 @@ async def _call_groq_chat(
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_message},
             ],
-            "temperature": 0.3,
-            "max_tokens": 500,
+            "temperature": 0.25,
+            "max_tokens": 350,
         },
         timeout=30.0,
     )
@@ -249,53 +250,9 @@ async def chat(payload: ChatRequest, request: Request):
             response="SaakhSetu Advisor is offline: Please set the GROQ_API_KEY environment variable on the server to enable AI features."
         )
 
-    score_context = ""
-    if payload.request_id:
-        score_record = None
-        if os.path.exists(AUDIT_LOG_FILE):
-            try:
-                with open(AUDIT_LOG_FILE, "r") as f:
-                    logs = json.load(f)
-                for log in logs:
-                    if log.get("request_id") == payload.request_id:
-                        score_record = log
-                        break
-            except Exception:
-                pass
-        
-        if score_record:
-            score_context = (
-                f"The user's credit profile details are:\n"
-                f"- Credit Score: {score_record.get('score')}/100\n"
-                f"- Risk Category: {score_record.get('risk_category')}\n"
-                f"- Repayment History Score: {score_record.get('repayment_history_score')}/100\n"
-                f"- Land Area: {score_record.get('land_area_acres')} acres\n"
-                f"- Annual Income Band: {score_record.get('annual_income_band')}\n"
-                f"- Reason Codes: {', '.join(score_record.get('reason_codes', []))}\n"
-                f"- Risk Summary: {score_record.get('risk_summary')}\n"
-                f"- Recommendations: {', '.join(score_record.get('recommendations', []))}\n"
-            )
-        else:
-            score_context = f"The requested request_id '{payload.request_id}' was not found in our history logs."
-
-    system_prompt = (
-        "You are SaakhSetu Credit Advisor, an AI assistant helping farmers understand their credit score.\n"
-        "Your responsibilities:\n"
-        "1. Explain scores in simple language.\n"
-        "2. Explain reason codes.\n"
-        "3. Suggest improvements.\n"
-        "4. Explain risk categories.\n"
-        "5. Help users understand factors affecting scoring.\n"
-        "6. Never change the score.\n"
-        "7. Never invent financial data.\n"
-        "8. Use only provided score context.\n"
-        "9. Keep responses under 150 words.\n"
-        "10. Be clear and practical.\n\n"
+    system_prompt = build_advisor_system_prompt(
+        payload.message, request_id=payload.request_id
     )
-    if score_context:
-        system_prompt += f"CONTEXT:\n{score_context}\n"
-    else:
-        system_prompt += "No specific credit score profile is loaded. Ask the user to run a calculation first or guide them generally.\n"
 
     try:
         bot_reply, error = await _complete_advisor_chat(

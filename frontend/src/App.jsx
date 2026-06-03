@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { submitScore, getScores, getAuditLogs, sendChatMessage } from "./api";
+import { submitScore, getScores, getAuditLogs } from "./api";
+import CreditAdvisorChat from "./CreditAdvisorChat";
 import ScoreForm from "./ScoreForm";
 import ScoreResult from "./ScoreResult";
 import "./App.css";
@@ -21,17 +22,8 @@ export default function App() {
   const [logsLoading, setLogsLoading] = useState(false);
   const [logsError, setLogsError] = useState(null);
 
-  // Chatbot Advisor States
   const [chatOpen, setChatOpen] = useState(false);
-  const [chatInput, setChatInput] = useState("");
   const [chatRequestId, setChatRequestId] = useState(null);
-  const [chatLoading, setChatLoading] = useState(false);
-  const [chatMessages, setChatMessages] = useState([
-    {
-      role: "bot",
-      text: "Hello! I am your SaakhSetu Credit Advisor. Ask me anything about agricultural credit scores, risk categories, or how to improve your rating.",
-    },
-  ]);
 
   const handleSubmit = async (formData) => {
     setLoading(true);
@@ -99,88 +91,13 @@ export default function App() {
       const detailedRecord = await response.json();
       setResult(detailedRecord);
       setChatRequestId(reqId);
-      // Open chatbot and notify
       setChatOpen(true);
-      setChatMessages((prev) => [
-        ...prev,
-        {
-          role: "system",
-          text: `Loaded credit profile Ref: ${reqId.substring(0, 8)}... Ask me questions about this specific score!`,
-        },
-      ]);
     } catch (err) {
       alert("Failed to load details: " + err.message);
     } finally {
       setLoading(false);
     }
   };
-
-  const SUGGESTED_QUESTIONS = [
-    "Why is my score low?",
-    "How can I improve my score?",
-    "What factors affect my score?",
-  ];
-
-  const handleSuggestedQuestionClick = async (question) => {
-    if (chatLoading) return;
-    setChatMessages((prev) => [...prev, { role: "user", text: question }]);
-    setChatLoading(true);
-
-    try {
-      const activeId = chatRequestId || (result ? result.request_id : null);
-      const data = await sendChatMessage(question, activeId);
-      setChatMessages((prev) => [...prev, { role: "bot", text: data.response }]);
-    } catch (err) {
-      setChatMessages((prev) => [
-        ...prev,
-        {
-          role: "error",
-          text: err.message || "Failed to send message to SaakhSetu Advisor.",
-        },
-      ]);
-    } finally {
-      setChatLoading(false);
-    }
-  };
-
-  const handleSendChatMessage = async (e) => {
-    e.preventDefault();
-    if (!chatInput.trim() || chatLoading) return;
-    const userMsg = chatInput.trim();
-    setChatInput("");
-
-    // Add user message to history
-    setChatMessages((prev) => [...prev, { role: "user", text: userMsg }]);
-    setChatLoading(true);
-
-    try {
-      const activeId = chatRequestId || (result ? result.request_id : null);
-      const data = await sendChatMessage(userMsg, activeId);
-      setChatMessages((prev) => [...prev, { role: "bot", text: data.response }]);
-    } catch (err) {
-      setChatMessages((prev) => [
-        ...prev,
-        {
-          role: "error",
-          text: err.message || "Failed to send message to SaakhSetu Advisor.",
-        },
-      ]);
-    } finally {
-      setChatLoading(false);
-    }
-  };
-
-  const handleResetChat = () => {
-    setChatMessages([
-      {
-        role: "bot",
-        text: "Hello! I am your SaakhSetu Credit Advisor. Ask me anything about agricultural credit scores, risk categories, or how to improve your rating.",
-      },
-    ]);
-    setChatRequestId(null);
-    setChatInput("");
-  };
-
 
   const getRiskCategoryLabel = (cat) => {
     if (!cat) return "";
@@ -464,111 +381,13 @@ export default function App() {
         </section>
       </main>
 
-      {/* Floating Logo Advisor Chatbot Widget */}
-      <div className="floating-chat-container">
-        {chatOpen && (
-          <div className="chat-popup-box glass-card">
-            <div className="chat-header">
-              <div className="chat-header-left">
-                <img src="/favicon.png" alt="SaakhSetu Logo" className="chat-header-logo" />
-                <div className="chat-header-text">
-                  <h3>Credit Advisor</h3>
-                  <span className="online-indicator">Active</span>
-                </div>
-              </div>
-              <div className="chat-header-right-actions">
-                <button
-                  type="button"
-                  className="chat-reset-btn"
-                  onClick={handleResetChat}
-                  title="Reset Chat"
-                >
-                  <svg className="chat-reset-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="1 4 1 10 7 10"></polyline>
-                    <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
-                  </svg>
-                </button>
-                <button className="chat-close-btn" onClick={() => setChatOpen(false)} title="Close Chat">
-                  ✕
-                </button>
-              </div>
-            </div>
-
-            <div className="chat-context-banner">
-              {chatRequestId ? (
-                <span>
-                  Analyzing Profile: <strong className="monospace">{chatRequestId.substring(0, 8)}...</strong>
-                </span>
-              ) : (
-                <span>No profile loaded. Ask general credit questions.</span>
-              )}
-            </div>
-
-            <div className="chat-messages-body">
-              {chatMessages.map((msg, idx) => (
-                <div key={idx} className={`chat-message-bubble ${msg.role}`}>
-                  <p>{msg.text}</p>
-                </div>
-              ))}
-              {chatLoading && (
-                <div className="chat-message-bubble bot typing-loading">
-                  <span className="loader-dot"></span>
-                  <span className="loader-dot"></span>
-                  <span className="loader-dot"></span>
-                </div>
-              )}
-            </div>
-
-            {/* Suggested Prompts */}
-            <div className="chat-suggested-prompts">
-              {SUGGESTED_QUESTIONS.map((q, idx) => (
-                <button
-                  key={idx}
-                  type="button"
-                  className="suggested-prompt-btn"
-                  onClick={() => handleSuggestedQuestionClick(q)}
-                  disabled={chatLoading}
-                >
-                  {q}
-                </button>
-              ))}
-            </div>
-
-            <form className="chat-input-footer" onSubmit={handleSendChatMessage}>
-              <div className="chat-input-container-inner">
-                <input
-                  type="text"
-                  placeholder="Ask advisor (max 250 chars)..."
-                  value={chatInput}
-                  onChange={(e) => setChatInput(e.target.value)}
-                  disabled={chatLoading}
-                  maxLength={250}
-                  required
-                />
-                <span className="char-counter">{chatInput.length}/250</span>
-              </div>
-              <button type="submit" disabled={chatLoading}>
-                ➜
-              </button>
-            </form>
-          </div>
-        )}
-
-        <button
-          className={`chat-fab-trigger ${chatOpen ? "active" : ""}`}
-          onClick={() => setChatOpen(!chatOpen)}
-          title="SaakhSetu AI Credit Advisor"
-        >
-          {chatOpen ? (
-            <svg className="chat-fab-close-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-          ) : (
-            <img src="/favicon.png" alt="AI Advisor Logo" className="chat-fab-logo" />
-          )}
-        </button>
-      </div>
+      <CreditAdvisorChat
+        open={chatOpen}
+        onOpenChange={setChatOpen}
+        profileRequestId={chatRequestId}
+        onClearProfile={() => setChatRequestId(null)}
+        fallbackRequestId={result?.request_id}
+      />
 
       {/* Footer */}
       <footer className="footer">

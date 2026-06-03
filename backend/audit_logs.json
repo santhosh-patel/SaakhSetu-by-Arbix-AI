@@ -1098,5 +1098,159 @@
       "Formally register and document all land deeds to support future credit requests.",
       "Maintain digital transaction records to verify secondary revenue streams."
     ]
+  },
+  {
+    "request_id": "6c4057c5-1ad2-4814-9678-7d278cf4fc6c",
+    "timestamp": "2026-06-03T14:50:35.446893Z",
+    "score": 82.0,
+    "reason_codes": [
+      "moderate_repayment",
+      "large_landholding",
+      "upper_mid_income_band",
+      "low_risk_crop"
+    ],
+    "risk_category": "LOW_RISK",
+    "land_area_acres": 5.0,
+    "crop_type": "paddy",
+    "repayment_history_score": 70.0,
+    "annual_income_band": "5-10L",
+    "risk_summary": "The applicant has a moderate repayment history, reflecting general financial diligence. Large land ownership provides solid agricultural asset backing. A robust annual income profile offers strong credit security. Overall credit risk is considered low, supporting favorable lending decisions.",
+    "recommendations": [
+      "Strive to clear past dues early to elevate your repayment standing.",
+      "Maintain a clean credit record by avoiding multiple concurrent loan inquiries.",
+      "Keep well-documented records of all input purchase receipts and harvest sales."
+    ]
+  },
+  {
+    "request_id": "8a30657f-398a-4893-a1b8-34c03c445244",
+    "timestamp": "2026-06-03T14:53:03.212561Z",
+    "score": 70.0,
+    "reason_codes": [
+      "moderate_repayment",
+      "mid_landholding",
+      "mid_income_band",
+      "low_risk_crop"
+    ],
+    "risk_category": "LOW_RISK",
+    "land_area_acres": 2.5,
+    "crop_type": "wheat",
+    "repayment_history_score": 75.0,
+    "annual_income_band": "2-5L",
+    "risk_summary": "The applicant has a moderate repayment history, reflecting general financial diligence. Moderate land acreage provides a stable basis for farming operations. A moderate annual income provides a basic financial buffer. Overall credit risk is considered low, supporting favorable lending decisions.",
+    "recommendations": [
+      "Strive to clear past dues early to elevate your repayment standing.",
+      "Formally register and document all land deeds to support future credit requests.",
+      "Maintain digital transaction records to verify secondary revenue streams."
+    ]
+  },
+  {
+    "request_id": "200c9df4-cf62-4c43-951f-15f330722855",
+    "timestamp": "2026-06-03T14:53:03.218614Z",
+    "score": 70.0,
+    "reason_codes": [
+      "moderate_repayment",
+      "mid_landholding",
+      "mid_income_band",
+      "low_risk_crop"
+    ],
+    "risk_category": "LOW_RISK",
+    "land_area_acres": 2.5,
+    "crop_type": "wheat",
+    "repayment_history_score": 75.0,
+    "annual_income_band": "2-5L",
+    "risk_summary": "The applicant has a moderate repayment history, reflecting general financial diligence. Moderate land acreage provides a stable basis for farming operations. A moderate annual income provides a basic financial buffer. Overall credit risk is considered low, supporting favorable lending decisions.",
+    "recommendations": [
+      "Strive to clear past dues early to elevate your repayment standing.",
+      "Formally register and document all land deeds to support future credit requests.",
+      "Maintain digital transaction records to verify secondary revenue streams."
+    ]
+  },
+  {
+    "request_id": "f042e32d-d3cd-4fe0-adf9-ec3ddb3bf585",
+    "timestamp": "2026-06-03T14:53:03.224908Z",
+    "score": 65.0,
+    "reason_codes": [
+      "moderate_repayment",
+      "mid_landholding",
+      "mid_income_band",
+      "medium_risk_crop"
+    ],
+    "risk_category": "LOW_RISK",
+    "land_area_acres": 2.5,
+    "crop_type": "cotton",
+    "repayment_history_score": 75.0,
+    "annual_income_band": "2-5L",
+    "risk_summary": "The applicant has a moderate repayment history, reflecting general financial diligence. Moderate land acreage provides a stable basis for farming operations. A moderate annual income provides a basic financial buffer. Overall credit risk is considered low, supporting favorable lending decisions.",
+    "recommendations": [
+      "Strive to clear past dues early to elevate your repayment standing.",
+      "Formally register and document all land deeds to support future credit requests.",
+      "Maintain digital transaction records to verify secondary revenue streams."
+    ]
+  },
+  {
+    "request_id": "ec1ebcf5-78b4-4fbc-9308-fb005c792bf7",
+    "timestamp": "2026-06-03T14:53:03.228857Z",
+    "score": 60.0,
+    "reason_codes": [
+      "moderate_repayment",
+      "mid_landholding",
+      "mid_income_band",
+      "high_risk_crop"
+    ],
+    "risk_category": "LOW_RISK",
+    "land_area_acres": 2.5,
+    "crop_type": "sugarcane",
+    "repayment_history_score": 75.0,
+    "annual_income_band": "2-5L",
+    "risk_summary": "The applicant has a moderate repayment history, reflecting general financial diligence. Moderate land acreage provides a stable basis for farming operations. A moderate annual income provides a basic financial buffer. Overall credit risk is considered low, supporting favorable lending decisions.",
+    "recommendations": [
+      "Strive to clear past dues early to elevate your repayment standing.",
+      "Formally register and document all land deeds to support future credit requests.",
+      "Maintain digital transaction records to verify secondary revenue streams."
+    ]
+  },
+  {
+    "request_id": "8ef67af5-8721-4fe7-b87b-337fcde65e3c",
+    "timestamp": "2026-06-03T14:53:03.237928Z",
+    "score": 70.0,
+    "reason_codes": [
+      "moderate_repayment",
+      "mid_landholding",
+      "mid_income_band",
+      "low_risk_crop"
+    ],
+    "risk_category": "LOW_RISK",
+    "land_area_acres": 2.5,
+    "crop_type": "wheat",
+    "repayment_history_score": 75.0,
+    "annual_income_band": "2-5L",
+    "risk_summary": "The applicant has a moderate repayment history, reflecting general financial diligence. Moderate land acreage provides a stable basis for farming operations. A moderate annual income provides a basic financial buffer. Overall credit risk is considered low, supporting favorable lending decisions.",
+    "recommendations": [
+      "Strive to clear past dues early to elevate your repayment standing.",
+      "Formally register and document all land deeds to support future credit requests.",
+      "Maintain digital transaction records to verify secondary revenue streams."
+    ]
+  },
+  {
+    "request_id": "9a9f9b5f-221b-44d0-b0b4-f5f0e7ac3e16",
+    "timestamp": "2026-06-03T14:53:03.242260Z",
+    "score": 70.0,
+    "reason_codes": [
+      "moderate_repayment",
+      "mid_landholding",
+      "mid_income_band",
+      "low_risk_crop"
+    ],
+    "risk_category": "LOW_RISK",
+    "land_area_acres": 2.5,
+    "crop_type": "wheat",
+    "repayment_history_score": 75.0,
+    "annual_income_band": "2-5L",
+    "risk_summary": "The applicant has a moderate repayment history, reflecting general financial diligence. Moderate land acreage provides a stable basis for farming operations. A moderate annual income provides a basic financial buffer. Overall credit risk is considered low, supporting favorable lending decisions.",
+    "recommendations": [
+      "Strive to clear past dues early to elevate your repayment standing.",
+      "Formally register and document all land deeds to support future credit requests.",
+      "Maintain digital transaction records to verify secondary revenue streams."
+    ]
   }
 ]

@@ -243,5 +243,40 @@
     "request_id": "e9948bf1-f318-40ef-a58b-c31319965d7a",
     "timestamp": "2026-06-03T14:48:25.844215Z",
     "score": 70.0
+  },
+  {
+    "request_id": "6c4057c5-1ad2-4814-9678-7d278cf4fc6c",
+    "timestamp": "2026-06-03T14:50:35.446893Z",
+    "score": 82.0
+  },
+  {
+    "request_id": "8a30657f-398a-4893-a1b8-34c03c445244",
+    "timestamp": "2026-06-03T14:53:03.212561Z",
+    "score": 70.0
+  },
+  {
+    "request_id": "200c9df4-cf62-4c43-951f-15f330722855",
+    "timestamp": "2026-06-03T14:53:03.218614Z",
+    "score": 70.0
+  },
+  {
+    "request_id": "f042e32d-d3cd-4fe0-adf9-ec3ddb3bf585",
+    "timestamp": "2026-06-03T14:53:03.224908Z",
+    "score": 65.0
+  },
+  {
+    "request_id": "ec1ebcf5-78b4-4fbc-9308-fb005c792bf7",
+    "timestamp": "2026-06-03T14:53:03.228857Z",
+    "score": 60.0
+  },
+  {
+    "request_id": "8ef67af5-8721-4fe7-b87b-337fcde65e3c",
+    "timestamp": "2026-06-03T14:53:03.237928Z",
+    "score": 70.0
+  },
+  {
+    "request_id": "9a9f9b5f-221b-44d0-b0b4-f5f0e7ac3e16",
+    "timestamp": "2026-06-03T14:53:03.242260Z",
+    "score": 70.0
   }
 ]

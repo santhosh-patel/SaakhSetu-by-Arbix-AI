@@ -6,47 +6,47 @@ function scoreClass(score) {
   return "score-low";
 }
 
+function formatReasonCode(code) {
+  return code.replace(/_/g, " ");
+}
+
+const FACTOR_CONFIG = [
+  { key: "repayment_history", label: "Repayment", max: 35, weight: "35%" },
+  { key: "land_area", label: "Land size", max: 25, weight: "25%" },
+  { key: "income_band", label: "Income", max: 25, weight: "25%" },
+  { key: "crop_risk", label: "Crop risk", max: 15, weight: "15%" },
+];
+
 export default function ScoreResult({ result, apiErrors, networkError, loading }) {
   const [animatedScore, setAnimatedScore] = useState(0);
   const [animateBars, setAnimateBars] = useState(false);
   const [prevResultId, setPrevResultId] = useState(null);
 
-  // Update states during render when result changes to reset animation states
   if (result && result.request_id !== prevResultId) {
     setPrevResultId(result.request_id);
     setAnimateBars(false);
     setAnimatedScore(0);
   }
 
-  // Trigger progress bar animation after reset
   useEffect(() => {
     if (result && !animateBars) {
-      const timer = setTimeout(() => {
-        setAnimateBars(true);
-      }, 50);
+      const timer = setTimeout(() => setAnimateBars(true), 50);
       return () => clearTimeout(timer);
     }
   }, [result, animateBars]);
 
-  // Animate score counting up
   useEffect(() => {
     if (result && result.score !== undefined) {
-      const duration = 750; // ms
-      const start = 0;
+      const duration = 750;
       const end = result.score;
       const startTime = performance.now();
 
       const animate = (currentTime) => {
         const elapsed = currentTime - startTime;
         const progress = Math.min(elapsed / duration, 1);
-        const ease = progress * (2 - progress); // outQuad
-        const currentVal = Math.round(start + ease * (end - start));
-        
-        setAnimatedScore(currentVal);
-
-        if (progress < 1) {
-          requestAnimationFrame(animate);
-        }
+        const ease = progress * (2 - progress);
+        setAnimatedScore(Math.round(ease * end));
+        if (progress < 1) requestAnimationFrame(animate);
       };
 
       requestAnimationFrame(animate);
@@ -55,15 +55,23 @@ export default function ScoreResult({ result, apiErrors, networkError, loading }
 
   if (loading) {
     return (
-      <div className="result-panel loading-skeleton">
-        <div className="skeleton-circle"></div>
-        <div className="skeleton-line-short"></div>
-        <div className="skeleton-chips-row">
-          <div className="skeleton-chip-item"></div>
-          <div className="skeleton-chip-item"></div>
-          <div className="skeleton-chip-item"></div>
+      <div className="result-panel loading-skeleton dashboard-skeleton">
+        <div className="skeleton-hero">
+          <div className="skeleton-circle"></div>
+          <div className="skeleton-summary">
+            <div className="skeleton-line-short"></div>
+            <div className="skeleton-chips-row">
+              <div className="skeleton-chip-item"></div>
+              <div className="skeleton-chip-item"></div>
+            </div>
+          </div>
         </div>
-        <div className="skeleton-line-long"></div>
+        <div className="skeleton-factor-grid">
+          <div className="skeleton-factor-card"></div>
+          <div className="skeleton-factor-card"></div>
+          <div className="skeleton-factor-card"></div>
+          <div className="skeleton-factor-card"></div>
+        </div>
       </div>
     );
   }
@@ -116,153 +124,149 @@ export default function ScoreResult({ result, apiErrors, networkError, loading }
           </svg>
         </div>
         <h3>Awaiting Calculation</h3>
-        <p>
-          Provide the farming parameters on the left to compute the credit score.
-        </p>
+        <p>Enter farm parameters on the left to generate your credit score and insights.</p>
       </div>
     );
   }
 
-  // Circle path variables
-  const radius = 38;
+  const radius = 42;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (animatedScore / 100) * circumference;
   const currentScoreClass = scoreClass(result.score);
+  const contributions = result.contributions || {};
 
   return (
     <div className="result-panel success-panel">
-      {/* Circle Score Indicator */}
-      <div className="score-visualization">
-        <svg viewBox="0 0 100 100" className="score-circle-svg">
-          <circle cx="50" cy="50" r={radius} className="circle-track" />
-          <circle
-            cx="50"
-            cy="50"
-            r={radius}
-            className={`circle-fill ${currentScoreClass}`}
-            strokeDasharray={circumference}
-            strokeDashoffset={strokeDashoffset}
-            strokeLinecap="round"
-            transform="rotate(-90 50 50)"
-          />
-          <g className="circle-text-container">
-            <text x="50" y="47" textAnchor="middle" className="circle-score-number">{animatedScore}</text>
-            <text x="50" y="65" textAnchor="middle" className="circle-score-label">Credit Score</text>
-          </g>
-        </svg>
-      </div>
-
-      {/* Risk Category Badge */}
-      {result.risk_category && (
-        <div className="risk-category-badge-container">
-          <span className={`risk-category-badge ${currentScoreClass}`}>
-            {result.risk_category.replace("_", " ")}
-          </span>
-        </div>
-      )}
-
-      {/* Explainable Factor Details (Dashboard) */}
-      <div className="explanation-section-block">
-        <h4 className="detail-title">Score Attribution</h4>
-        <div className="contribution-dashboard">
-          <div className="contribution-row">
-            <div className="contribution-meta">
-              <span className="factor-name">Repayment History</span>
-              <span className="factor-pts">{result.contributions.repayment_history} / 35 pts</span>
+      <div className="insights-dashboard">
+        <header className="dashboard-hero">
+          <div className="dashboard-score-block">
+            <div className="score-visualization">
+              <svg viewBox="0 0 100 100" className="score-circle-svg" aria-hidden="true">
+                <circle cx="50" cy="50" r={radius} className="circle-track" />
+                <circle
+                  cx="50"
+                  cy="50"
+                  r={radius}
+                  className={`circle-fill ${currentScoreClass}`}
+                  strokeDasharray={circumference}
+                  strokeDashoffset={strokeDashoffset}
+                  strokeLinecap="round"
+                  transform="rotate(-90 50 50)"
+                />
+                <g className="circle-text-container">
+                  <text x="50" y="46" textAnchor="middle" className="circle-score-number">
+                    {animatedScore}
+                  </text>
+                  <text x="50" y="64" textAnchor="middle" className="circle-score-label">
+                    / 100
+                  </text>
+                </g>
+              </svg>
             </div>
-            <div className="bar-container">
-              <div
-                className={`bar-fill ${currentScoreClass}`}
-                style={{ width: `${animateBars ? (result.contributions.repayment_history / 35) * 100 : 0}%` }}
-              ></div>
-            </div>
+            <p className="dashboard-score-caption">Credit score</p>
           </div>
-          
-          <div className="contribution-row">
-            <div className="contribution-meta">
-              <span className="factor-name">Land Size</span>
-              <span className="factor-pts">{result.contributions.land_area} / 25 pts</span>
-            </div>
-            <div className="bar-container">
-              <div
-                className={`bar-fill ${currentScoreClass}`}
-                style={{ width: `${animateBars ? (result.contributions.land_area / 25) * 100 : 0}%` }}
-              ></div>
-            </div>
-          </div>
-          
-          <div className="contribution-row">
-            <div className="contribution-meta">
-              <span className="factor-name">Income Bracket</span>
-              <span className="factor-pts">{result.contributions.income_band} / 25 pts</span>
-            </div>
-            <div className="bar-container">
-              <div
-                className={`bar-fill ${currentScoreClass}`}
-                style={{ width: `${animateBars ? (result.contributions.income_band / 25) * 100 : 0}%` }}
-              ></div>
-            </div>
-          </div>
-          
-          <div className="contribution-row">
-            <div className="contribution-meta">
-              <span className="factor-name">Crop Risk Rating</span>
-              <span className="factor-pts">{result.contributions.crop_risk} / 15 pts</span>
-            </div>
-            <div className="bar-container">
-              <div
-                className={`bar-fill ${currentScoreClass}`}
-                style={{ width: `${animateBars ? (result.contributions.crop_risk / 15) * 100 : 0}%` }}
-              ></div>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      {/* AI Risk Summary Block */}
-      {result.risk_summary && (
-        <div className="ai-risk-summary-block">
-          <h4 className="detail-title">AI Risk Summary</h4>
-          <p className="risk-summary-text">{result.risk_summary}</p>
-        </div>
-      )}
-
-      {/* AI Recommendations Block */}
-      {result.recommendations && result.recommendations.length > 0 && (
-        <div className="ai-recommendations-block">
-          <h4 className="detail-title">AI Recommendations</h4>
-          <ul className="recommendations-list">
-            {result.recommendations.map((rec, i) => (
-              <li key={i} className="recommendation-item">
-                <span className="recommendation-bullet">
-                  <svg className="rec-bullet-svg" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="20 6 9 17 4 12"></polyline>
-                  </svg>
+          <div className="dashboard-summary-block">
+            {result.risk_category && (
+              <div className="summary-metric">
+                <span className="summary-metric-label">Risk category</span>
+                <span className={`risk-category-badge ${currentScoreClass}`}>
+                  {result.risk_category.replace(/_/g, " ")}
                 </span>
-                <span className="recommendation-text">{rec}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+              </div>
+            )}
+            {result.reason_codes?.length > 0 && (
+              <div className="summary-metric summary-metric--codes">
+                <span className="summary-metric-label">Reason codes</span>
+                <div className="reason-code-chips">
+                  {result.reason_codes.map((code) => (
+                    <span key={code} className={`factor-chip ${currentScoreClass}`}>
+                      <span className="dot-indicator" />
+                      {formatReasonCode(code)}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </header>
 
-      {/* Transaction Details */}
-      <div className="audit-ledger-block">
-        <h4 className="detail-title">Audit Log Trail</h4>
-        <div className="meta-table">
-          <div className="meta-table-row">
-            <span className="meta-key">Reference ID</span>{" "}
-            <span className="meta-val monospace">{result.request_id}</span>
+        <section className="dashboard-section" aria-labelledby="breakdown-heading">
+          <div className="dashboard-section-head">
+            <h4 id="breakdown-heading" className="dashboard-section-title">
+              Score breakdown
+            </h4>
+            <span className="dashboard-section-hint">Weighted factors</span>
           </div>
-          <div className="meta-table-row">
-            <span className="meta-key">Logged At</span>{" "}
-            <span className="meta-val">{new Date(result.timestamp).toLocaleTimeString()}</span>
+          <div className="factor-dashboard-grid">
+            {FACTOR_CONFIG.map(({ key, label, max, weight }) => {
+              const pts = contributions[key] ?? 0;
+              const pct = (pts / max) * 100;
+              return (
+                <article key={key} className="factor-metric-card">
+                  <div className="factor-metric-header">
+                    <span className="factor-metric-name">{label}</span>
+                    <span className="factor-metric-weight">{weight}</span>
+                  </div>
+                  <div className="factor-metric-value">
+                    <span className={`factor-metric-pts ${currentScoreClass}`}>{pts}</span>
+                    <span className="factor-metric-max">/ {max} pts</span>
+                  </div>
+                  <div className="bar-container bar-container--dashboard">
+                    <div
+                      className={`bar-fill ${currentScoreClass}`}
+                      style={{ width: `${animateBars ? pct : 0}%` }}
+                    />
+                  </div>
+                </article>
+              );
+            })}
           </div>
-          <div className="meta-table-row">
-            <span className="meta-key">SQLite Write</span>{" "}
-            <span className="meta-val text-green">Success</span>
-          </div>
-        </div>
+        </section>
+
+        {(result.risk_summary || result.recommendations?.length > 0) && (
+          <section className="dashboard-section dashboard-insights-row" aria-labelledby="insights-heading">
+            <h4 id="insights-heading" className="dashboard-section-title dashboard-section-title--solo">
+              Insights
+            </h4>
+            <div className="insights-cards">
+              {result.risk_summary && (
+                <article className="insight-card">
+                  <h5 className="insight-card-title">Risk summary</h5>
+                  <p className="insight-card-body">{result.risk_summary}</p>
+                </article>
+              )}
+              {result.recommendations?.length > 0 && (
+                <article className="insight-card">
+                  <h5 className="insight-card-title">Recommendations</h5>
+                  <ul className="insight-list">
+                    {result.recommendations.map((rec, i) => (
+                      <li key={i}>{rec}</li>
+                    ))}
+                  </ul>
+                </article>
+              )}
+            </div>
+          </section>
+        )}
+
+        <details className="audit-details">
+          <summary className="audit-details-summary">Audit reference</summary>
+          <dl className="audit-details-list">
+            <div className="audit-details-item">
+              <dt>Reference ID</dt>
+              <dd className="monospace">{result.request_id}</dd>
+            </div>
+            <div className="audit-details-item">
+              <dt>Logged at</dt>
+              <dd>{new Date(result.timestamp).toLocaleString()}</dd>
+            </div>
+            <div className="audit-details-item">
+              <dt>Persistence</dt>
+              <dd className="text-green">SQLite — recorded</dd>
+            </div>
+          </dl>
+        </details>
       </div>
     </div>
   );
