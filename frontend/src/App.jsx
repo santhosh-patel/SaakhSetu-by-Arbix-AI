@@ -41,8 +41,7 @@ export default function App() {
       {/* Navigation */}
       <nav className="navbar">
         <div className="nav-logo">
-          <span className="logo-icon">🌾</span>
-          <span className="logo-text">SAAKH<span className="accent-text">SETU</span></span>
+          <img src="/logo.png" alt="SaakhSetu" className="logo-img" />
         </div>
       </nav>
 

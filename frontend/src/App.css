@@ -97,19 +97,12 @@ body {
 .nav-logo {
   display: flex;
   align-items: center;
-  gap: 0.35rem;
-  font-family: var(--font-title);
-  font-weight: 800;
-  font-size: 1.25rem;
-  letter-spacing: 0.5px;
 }
 
-.logo-icon {
-  font-size: 1.35rem;
-}
-
-.accent-text {
-  color: var(--accent-green);
+.logo-img {
+  height: 38px;
+  width: auto;
+  display: block;
 }
 
 /* Hero Section */
