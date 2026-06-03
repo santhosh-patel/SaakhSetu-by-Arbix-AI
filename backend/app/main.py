@@ -28,8 +28,10 @@ from app.knowledge_base import build_advisor_system_prompt
 from app.schemas import ScoreRequest, ScoreResponse, ChatRequest, ChatResponse
 from app.scoring import compute_score
 
-HISTORY_FILE = "history.json"
-AUDIT_LOG_FILE = "audit_logs.json"
+_DATA_DIR = Path(os.environ.get("SAAKHSETU_DATA_DIR", ".")).resolve()
+_DATA_DIR.mkdir(parents=True, exist_ok=True)
+HISTORY_FILE = str(_DATA_DIR / "history.json")
+AUDIT_LOG_FILE = str(_DATA_DIR / "audit_logs.json")
 
 GROQ_CHAT_URL = "https://api.groq.com/openai/v1/chat/completions"
 GROQ_CHAT_MODEL_PRIMARY = os.environ.get("GROQ_CHAT_MODEL", "llama-3.1-8b-instant")

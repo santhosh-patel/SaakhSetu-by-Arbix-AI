@@ -1,0 +1,15 @@
+**/.venv
+**/node_modules
+**/.git
+**/__pycache__
+**/.pytest_cache
+**/*.db
+**/*.db-journal
+frontend/dist
+backend/history.json
+backend/audit_logs.json
+.env
+.env.*
+!.env.docker.example
+!backend/.env.example
+!frontend/.env.example

@@ -9,7 +9,11 @@ from functools import lru_cache
 from pathlib import Path
 
 _KB_PATH = Path(__file__).resolve().parent / "data" / "advisor_knowledge.md"
-_AUDIT_LOG_FILE = "audit_logs.json"
+
+
+def _audit_log_path() -> Path:
+    data_dir = Path(os.environ.get("SAAKHSETU_DATA_DIR", ".")).resolve()
+    return data_dir / "audit_logs.json"
 
 # Section headers in advisor_knowledge.md used for lightweight retrieval
 _SECTION_PATTERN = re.compile(r"^## (.+)$", re.MULTILINE)
@@ -86,10 +90,11 @@ def select_knowledge_for_query(user_message: str, *, prefer_full: bool = True) -
 
 def resolve_score_record(request_id: str) -> dict | None:
     """Load a score profile from audit_logs.json for chat context."""
-    if not os.path.exists(_AUDIT_LOG_FILE):
+    audit_path = _audit_log_path()
+    if not audit_path.is_file():
         return None
     try:
-        with open(_AUDIT_LOG_FILE, encoding="utf-8") as f:
+        with open(audit_path, encoding="utf-8") as f:
             logs = json.load(f)
         for log in logs:
             if log.get("request_id") == request_id:

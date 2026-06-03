@@ -26,6 +26,31 @@ npm run dev
 
 Open <http://localhost:5173> — ensure the backend is running on port 8000.
 
+### Docker (recommended for demos)
+
+Prerequisites: [Docker](https://docs.docker.com/get-docker/) and Docker Compose v2.
+
+```bash
+# From project root
+cp backend/.env.example backend/.env   # set GROQ_API_KEY for AI advisor (optional)
+cp .env.docker.example .env          # optional Compose overrides
+
+docker compose up --build
+```
+
+| Service | URL |
+|---------|-----|
+| Frontend | <http://localhost:8080> |
+| Backend API | <http://localhost:8000> |
+| API docs | <http://localhost:8000/docs> |
+
+Data (SQLite, history, audit JSON) is stored in the `backend-data` Docker volume.
+
+```bash
+docker compose down          # stop
+docker compose down -v       # stop and remove persisted data
+```
+
 ### Tests
 
 ```bash
@@ -79,7 +104,7 @@ curl -s -X POST http://localhost:8000/score \
 - **SQLite over Postgres** — zero external dependencies; sufficient for single-instance use.
 - **Crop risk as static lookup** — simple and transparent; can be upgraded to a data-driven model later.
 - **ASCII vs en-dash income bands** — documented; frontend and backend use the same enum values.
-- **No Docker** — deferred to a future phase.
+- **Docker** — `docker compose up` runs backend + nginx frontend; see Docker section above.
 
 ## Release History
 

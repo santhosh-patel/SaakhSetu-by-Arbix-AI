@@ -278,5 +278,35 @@
     "request_id": "9a9f9b5f-221b-44d0-b0b4-f5f0e7ac3e16",
     "timestamp": "2026-06-03T14:53:03.242260Z",
     "score": 70.0
+  },
+  {
+    "request_id": "027081e5-c1f6-4fc1-ac54-fbab028e2770",
+    "timestamp": "2026-06-03T14:57:57.018411Z",
+    "score": 70.0
+  },
+  {
+    "request_id": "18313232-71ed-48ae-b515-2f56f05423f0",
+    "timestamp": "2026-06-03T14:57:57.023138Z",
+    "score": 70.0
+  },
+  {
+    "request_id": "f5bc4c61-0715-4012-b970-f0133748d84f",
+    "timestamp": "2026-06-03T14:57:57.026524Z",
+    "score": 65.0
+  },
+  {
+    "request_id": "816125fe-fa38-4437-ad93-ecbd27744ccf",
+    "timestamp": "2026-06-03T14:57:57.030543Z",
+    "score": 60.0
+  },
+  {
+    "request_id": "f539c027-731a-46ab-8fe1-ce90ab4740e1",
+    "timestamp": "2026-06-03T14:57:57.038879Z",
+    "score": 70.0
+  },
+  {
+    "request_id": "170a4da7-011e-48c6-ba51-8cfe3e05b95a",
+    "timestamp": "2026-06-03T14:57:57.042441Z",
+    "score": 70.0
   }
 ]
