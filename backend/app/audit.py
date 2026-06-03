@@ -2,6 +2,7 @@ import json
 import logging
 from datetime import datetime, timezone
 
+from app.database import save_audit_log
 from app.schemas import ScoreRequest
 
 logger = logging.getLogger("saakhsetu.audit")
@@ -20,7 +21,12 @@ def log_score_request(
     score: float,
     reason_codes: list[str],
 ) -> None:
-    """Structured audit log for every scoring request (non-PII fields only)."""
+    """Structured audit log for every scoring request (non-PII fields only).
+
+    Writes JSON to stdout AND persists to SQLite.
+    """
+    logged_at = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
+
     record = {
         "event": "score_request",
         "request_id": request_id,
@@ -31,6 +37,19 @@ def log_score_request(
         "annual_income_band": payload.annual_income_band.value,
         "score": score,
         "reason_codes": reason_codes,
-        "logged_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+        "logged_at": logged_at,
     }
     logger.info(json.dumps(record))
+
+    # Persist to SQLite
+    save_audit_log(
+        request_id=request_id,
+        timestamp=timestamp,
+        land_area_acres=payload.land_area_acres,
+        crop_type=payload.crop_type,
+        repayment_history_score=payload.repayment_history_score,
+        annual_income_band=payload.annual_income_band.value,
+        score=score,
+        reason_codes=reason_codes,
+        logged_at=logged_at,
+    )

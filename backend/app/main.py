@@ -1,14 +1,25 @@
 import uuid
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.audit import log_score_request
+from app.database import init_db
 from app.schemas import ScoreRequest, ScoreResponse
 from app.scoring import compute_score
 
-app = FastAPI(title="SaakhSetu Scoring API", version="1.0.0")
+
+@asynccontextmanager
+async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
+    """Initialise the SQLite audit database on startup."""
+    init_db()
+    yield
+
+
+app = FastAPI(title="SaakhSetu Scoring API", version="2.0.0", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,

@@ -1,6 +1,6 @@
 # SaakhSetu — Agricultural Credit Scoring
 
-Rule-based credit scoring API with a minimal React frontend. Accepts land, crop, repayment, and income inputs; returns a 0–100 score with three explainability reason codes and structured audit logging.
+Rule-based credit scoring API with a minimal React frontend. Accepts land, crop, repayment, and income inputs; returns a 0–100 score with four explainability reason codes, crop-type risk classification, and SQLite-backed audit logging.
 
 ## Run Instructions
 
@@ -53,40 +53,53 @@ curl -s -X POST http://localhost:8000/score \
 |------|--------|-----------|
 | Framework | FastAPI + Pydantic v2 | Automatic 422 validation, OpenAPI docs, minimal boilerplate |
 | Scoring | Pure module (`scoring.py`) | Testable without HTTP; easy to swap for ML later |
-| Reason codes | Exactly 3, one per factor | Matches spec; repayment, land, income each contribute one code |
-| Audit log | Structured JSON to stdout | Meets spec without DB complexity; safe for non-PII agricultural fields |
+| Reason codes | Exactly 4, one per factor | Repayment, land, income, and crop risk each contribute one code |
+| Audit log | Dual: JSON to stdout + SQLite | Structured console output for dev; persistent DB for history |
 | Income bands | ASCII hyphens (`2-5L`, `5-10L`) | Practical keyboard/API input; spec shows en-dashes but ASCII avoids copy-paste issues |
-| `crop_type` | Validated, not scored | Accepted per spec; extension point for crop-risk rules |
-| Persistence | None | Focus on core Phase 1 requirements |
+| `crop_type` | Scored via risk tier (low/medium/high) | Low-risk staples (wheat, rice) score higher; unknown crops default to high-risk |
+| Persistence | SQLite (`saakhsetu.db`) | Lightweight, zero-config; configurable via `SAAKHSETU_DB_PATH` env var |
+
+## Scoring Weights
+
+| Factor | Max Points | Tiers |
+|--------|-----------|-------|
+| Repayment history | 35 | ≥80 → 35, ≥50 → 22, <50 → 10 |
+| Land area (acres) | 25 | ≥5 → 25, ≥1 → 18, <1 → 8 |
+| Annual income band | 25 | >10L → 25, 5-10L → 20, 2-5L → 15, <2L → 8 |
+| Crop risk | 15 | Low → 15, Medium → 10, High → 5 |
+
+**Crop Risk Classification:**
+- **Low risk**: wheat, paddy, rice, barley, ragi, jowar
+- **Medium risk**: maize, mustard, cotton, soybean, groundnut
+- **High risk**: all other crops
 
 ## Tradeoffs
 
-- **No database** — audit logs go to stdout only; sufficient for Phase 1.
-- **crop_type not in score** — keeps exactly three reason codes from the three weighted factors.
+- **SQLite over Postgres** — zero external dependencies; sufficient for single-instance use.
+- **Crop risk as static lookup** — simple and transparent; can be upgraded to a data-driven model later.
 - **ASCII vs en-dash income bands** — documented; frontend and backend use the same enum values.
-- **No Docker** — deferred beyond Phase 1 scope.
+- **No Docker** — deferred to a future phase.
 
-## Phase 1 Release Plan
+## Release History
 
-This repository contains the Phase 1 release of the application featuring the minimal core API features and a basic frontend.
+### Phase 2 (current)
 
-### Completed Scope
+- **SQLite Audit Persistence**: Every scoring request is persisted to `saakhsetu.db` (configurable via `SAAKHSETU_DB_PATH`).
+- **Enhanced Scoring**: Crop type risk factor incorporated as a 4th scoring dimension (15 pts max).
+- **Expanded Tests**: 9 pytest cases including crop risk tier tests and SQLite audit verification.
 
-- **API Endpoint (`POST /score`)**: Web service built with FastAPI and Pydantic v2 incorporating input validation, rule-based credit scoring, and exactly three reason codes.
-- **Audit Logging**: Structured JSON logging to stdout for tracking score evaluations.
-- **Testing**: 5 pytest test cases verifying successful scoring and detailed input validation error states.
-- **Basic Frontend**: A clean React form showing loading/submitting state and backend validation errors.
-- **Documentation**: Simple setup, run guides, and design tradeoff notes.
+### Phase 1
 
-## Future Roadmap / Phase 2 Planning
-
-1. **SQLite Audit Persistence**: Store credit scoring request and response history in a database.
-2. **Enhanced Scoring**: Incorporate crop type risk factors into the overall credit score model.
+- **API Endpoint (`POST /score`)**: FastAPI + Pydantic v2 with input validation and rule-based credit scoring.
+- **Audit Logging**: Structured JSON logging to stdout.
+- **Testing**: 5 pytest cases (happy path + validation errors).
+- **Basic Frontend**: React form with loading state and error handling.
+- **Documentation**: Setup guides and design tradeoff notes.
 
 **Personally verified:**
 
-- Ran `pytest -v` — all 5 tests pass
+- Ran `pytest -v` — all 9 tests pass
+- Confirmed crop risk reason codes: `low_risk_crop` (wheat), `medium_risk_crop` (cotton), `high_risk_crop` (sugarcane)
+- Verified SQLite audit records match API response data
 - Confirmed Pydantic returns 422 for invalid land area, empty crop, bad income band, repayment out of range
-- Checked income band enum values match between frontend `<select>` and backend `IncomeBand`
 - Reviewed audit log payload — only the four scoring fields plus outputs; no PII
-- Corrected frontend error handling to parse FastAPI `detail` array format
