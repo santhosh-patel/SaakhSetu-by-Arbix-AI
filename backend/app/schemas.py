@@ -32,4 +32,16 @@ class ScoreResponse(BaseModel):
     score: float = Field(ge=0, le=100)
     reason_codes: list[str]
     contributions: dict[str, float]
+    risk_category: str
+    risk_summary: str
+    recommendations: list[str]
     timestamp: str
+
+
+class ChatRequest(BaseModel):
+    message: str
+    request_id: str | None = None
+
+
+class ChatResponse(BaseModel):
+    response: str

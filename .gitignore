@@ -18,3 +18,9 @@ frontend/dist/
 .idea/
 .vscode/
 *.log
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+

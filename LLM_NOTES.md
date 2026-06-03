@@ -45,3 +45,11 @@ The frontend was updated to a clean, light Dribbble-style theme using a warm cla
 - **Explainability Dashboard**: Replaced or augmented simple reason chips with animated horizontal progress bars showing explicit point allocations.
 - **Enlarged Slider + Manual Entry**: Thicker slider track (6px) and wider thumb (20px) next to a synced numeric manual score entry box for maximum input control.
 
+## Phase 3 — Enhanced Credit Assessment & AI Chatbot Advisor
+
+Phase 3 introduces advanced explainability summaries, recommendations, multi-tab navigation, JSON file storage persistence, and a Groq-powered AI Credit Advisor:
+1. **AI Powered Risk Summaries & Recommendations**: Rule-based paragraphs and actionable items generated on score calculation.
+2. **JSON Data Stores**: Local file logging to `history.json` and `audit_logs.json` exposed via HTTP GET endpoints.
+3. **Groq AI Chatbot Widget**: Floating chat popup (Llama 3 8B model) utilizing context injection to answer score-specific lending queries.
+4. **Tabbed Card UI**: Main card split into Calculator, Scores History (click-to-inspect loads details), and Audit Logs.
+

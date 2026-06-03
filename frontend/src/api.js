@@ -33,3 +33,31 @@ export function formatApiErrors(detail) {
   }
   return ["Request failed. Please try again."];
 }
+
+export async function getScores() {
+  const res = await fetch(`${API_BASE}/scores`);
+  if (!res.ok) {
+    throw new Error("Failed to fetch score history.");
+  }
+  return res.json();
+}
+
+export async function getAuditLogs() {
+  const res = await fetch(`${API_BASE}/audit-logs`);
+  if (!res.ok) {
+    throw new Error("Failed to fetch audit logs.");
+  }
+  return res.json();
+}
+
+export async function sendChatMessage(message, requestId) {
+  const res = await fetch(`${API_BASE}/chat`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message, request_id: requestId || null }),
+  });
+  if (!res.ok) {
+    throw new Error("Failed to connect to the advisor chatbot.");
+  }
+  return res.json();
+}

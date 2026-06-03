@@ -83,7 +83,14 @@ curl -s -X POST http://localhost:8000/score \
 
 ## Release History
 
-### Phase 2 (current)
+### Phase 3 (current)
+
+- **AI Risk Summaries & Recommendations**: Rule-based generation of short risk summaries and actionable recommendations returned on every score calculation.
+- **JSON Data Persistence**: Created JSON history (`history.json`) and audit log (`audit_logs.json`) stores with corresponding HTTP retrieval endpoints.
+- **AI Credit Advisor Chatbot**: Floating chatbot widget in the bottom-right corner powered by Llama 3 8B on Groq, dynamically loading calculated credit profiles for personalized advice.
+- **Multi-Tab Layout**: Tabbed views inside the main card container separating the Calculator, Scores History (supporting click-to-inspect), and Audit Logs.
+
+### Phase 2
 
 - **SQLite Audit Persistence**: Every scoring request is persisted to `saakhsetu.db` (configurable via `SAAKHSETU_DB_PATH`).
 - **Enhanced Scoring**: Crop type risk factor incorporated as a 4th scoring dimension (15 pts max).

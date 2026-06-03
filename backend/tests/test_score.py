@@ -125,3 +125,75 @@ def test_audit_persisted_to_sqlite(client):
 
     stored_contrib = json.loads(row[4])
     assert stored_contrib == data["contributions"]
+
+
+def test_history_and_audit_endpoints(client):
+    # Make a post
+    response = client.post("/score", json=VALID_PAYLOAD)
+    assert response.status_code == 200
+    data = response.json()
+    req_id = data["request_id"]
+
+    # Test GET /scores
+    resp_scores = client.get("/scores")
+    assert resp_scores.status_code == 200
+    scores_list = resp_scores.json()
+    assert len(scores_list) > 0
+    assert any(item["request_id"] == req_id for item in scores_list)
+
+    # Test GET /scores/{request_id}
+    resp_detail = client.get(f"/scores/{req_id}")
+    assert resp_detail.status_code == 200
+    detail = resp_detail.json()
+    assert detail["request_id"] == req_id
+    assert detail["score"] == data["score"]
+    assert "risk_category" in detail
+    assert "risk_summary" in detail
+    assert "recommendations" in detail
+
+    # Test GET /audit-logs
+    resp_audit = client.get("/audit-logs")
+    assert resp_audit.status_code == 200
+    audit_list = resp_audit.json()
+    assert len(audit_list) > 0
+    assert any(log["request_id"] == req_id for log in audit_list)
+
+
+def test_chat_without_api_key(client, monkeypatch):
+    monkeypatch.delenv("GROQ_API_KEY", raising=False)
+    resp = client.post("/chat", json={"message": "Hello"})
+    assert resp.status_code == 200
+    assert "Advisor is offline" in resp.json()["response"]
+
+
+def test_chat_input_length_guardrail(client):
+    long_message = "A" * 251
+    resp = client.post("/chat", json={"message": long_message})
+    assert resp.status_code == 200
+    assert "too long" in resp.json()["response"]
+
+
+def test_chat_rate_limiting(client, monkeypatch):
+    monkeypatch.setenv("GROQ_API_KEY", "dummy_key")
+    class MockResponse:
+        status_code = 200
+        def json(self):
+            return {"choices": [{"message": {"content": "Mock Bot Answer"}}]}
+    
+    async def mock_post(*args, **kwargs):
+        return MockResponse()
+
+    import httpx
+    monkeypatch.setattr(httpx.AsyncClient, "post", mock_post)
+
+    from app.main import chat_rate_limits
+    chat_rate_limits.clear()
+
+    for _ in range(30):
+        resp = client.post("/chat", json={"message": "Hello"})
+        assert resp.status_code == 200
+        assert resp.json()["response"] == "Mock Bot Answer"
+
+    resp = client.post("/chat", json={"message": "Hello"})
+    assert resp.status_code == 200
+    assert "Daily query limit reached" in resp.json()["response"]
