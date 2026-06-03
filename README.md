@@ -11,8 +11,11 @@ cd backend
 python3 -m venv .venv
 source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
+cp .env.example .env        # then set GROQ_API_KEY (https://console.groq.com/)
 uvicorn app.main:app --reload --port 8000
 ```
+
+The AI Credit Advisor reads `GROQ_API_KEY` from `backend/.env` automatically (never put this key in the frontend).
 
 API docs: <http://localhost:8000/docs>
 
@@ -87,7 +90,7 @@ curl -s -X POST http://localhost:8000/score \
 
 - **AI Risk Summaries & Recommendations**: Rule-based generation of short risk summaries and actionable recommendations returned on every score calculation.
 - **JSON Data Persistence**: Created JSON history (`history.json`) and audit log (`audit_logs.json`) stores with corresponding HTTP retrieval endpoints.
-- **AI Credit Advisor Chatbot**: Floating chatbot widget in the bottom-right corner powered by Llama 3 8B on Groq, dynamically loading calculated credit profiles for personalized advice.
+- **AI Credit Advisor Chatbot**: Groq chat with `llama-3.1-8b-instant` primary and `llama-3.3-70b-versatile` fallback; set `GROQ_API_KEY` in `backend/.env`.
 - **Multi-Tab Layout**: Tabbed views inside the main card container separating the Calculator, Scores History (supporting click-to-inspect), and Audit Logs.
 
 ### Phase 2
