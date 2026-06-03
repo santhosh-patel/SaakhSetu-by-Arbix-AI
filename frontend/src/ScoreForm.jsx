@@ -2,10 +2,23 @@ import { useState } from "react";
 
 const INCOME_BANDS = ["<2L", "2-5L", "5-10L", ">10L"];
 
+const TELANGANA_CROPS = [
+  { value: "paddy", label: "Paddy (Rice)" },
+  { value: "cotton", label: "Cotton" },
+  { value: "maize", label: "Maize" },
+  { value: "red gram", label: "Red Gram" },
+  { value: "turmeric", label: "Turmeric" },
+  { value: "groundnut", label: "Groundnut" },
+  { value: "chillies", label: "Chillies" },
+  { value: "soybean", label: "Soybean" },
+  { value: "sugarcane", label: "Sugarcane" },
+  { value: "green gram", label: "Green Gram" },
+];
+
 const INITIAL = {
   land_area_acres: "",
-  crop_type: "",
-  repayment_history_score: "",
+  crop_type: "paddy", // Default to Paddy (Rice)
+  repayment_history_score: "70",
   annual_income_band: "2-5L",
 };
 
@@ -60,15 +73,20 @@ export default function ScoreForm({ onSubmit, loading }) {
   };
 
   return (
-    <form className="score-form" onSubmit={handleSubmit}>
-      <div className="field">
-        <label htmlFor="land_area_acres">Land Area (acres)</label>
+    <form className="calculator-form" onSubmit={handleSubmit}>
+      {/* Land Area */}
+      <div className="form-field">
+        <label htmlFor="land_area_acres">
+          <span>Land Area</span>
+          <span className="label-hint">Acres</span>
+        </label>
         <input
           id="land_area_acres"
           name="land_area_acres"
           type="number"
           min="0.01"
           step="0.01"
+          placeholder="e.g. 2.5"
           value={form.land_area_acres}
           onChange={handleChange}
           disabled={loading}
@@ -76,37 +94,58 @@ export default function ScoreForm({ onSubmit, loading }) {
         />
       </div>
 
-      <div className="field">
-        <label htmlFor="crop_type">Crop Type</label>
-        <input
+      {/* Crop Type (Telangana Crops Dropdown) */}
+      <div className="form-field">
+        <label htmlFor="crop_type">
+          <span>Crop Type</span>
+          <span className="label-hint">Telangana Top Crops</span>
+        </label>
+        <select
           id="crop_type"
           name="crop_type"
-          type="text"
           value={form.crop_type}
           onChange={handleChange}
           disabled={loading}
-          required
-        />
+        >
+          {TELANGANA_CROPS.map((crop) => (
+            <option key={crop.value} value={crop.value}>
+              {crop.label}
+            </option>
+          ))}
+        </select>
       </div>
 
-      <div className="field">
-        <label htmlFor="repayment_history_score">Repayment History Score (0-100)</label>
+      {/* Repayment History Score */}
+      <div className="form-field">
+        <div className="slider-label-row">
+          <label htmlFor="repayment_history_score">Repayment Score</label>
+          <span className="slider-value">{form.repayment_history_score} / 100</span>
+        </div>
         <input
           id="repayment_history_score"
           name="repayment_history_score"
-          type="number"
+          type="range"
           min="0"
           max="100"
           step="1"
           value={form.repayment_history_score}
           onChange={handleChange}
           disabled={loading}
-          required
+          className="slider-input"
         />
+        <div className="slider-ticks">
+          <span>Weak</span>
+          <span>Moderate</span>
+          <span>Strong</span>
+        </div>
       </div>
 
-      <div className="field">
-        <label htmlFor="annual_income_band">Annual Income Band</label>
+      {/* Annual Income Band */}
+      <div className="form-field">
+        <label htmlFor="annual_income_band">
+          <span>Annual Income Band</span>
+          <span className="label-hint">In Lakhs (INR)</span>
+        </label>
         <select
           id="annual_income_band"
           name="annual_income_band"
@@ -116,22 +155,31 @@ export default function ScoreForm({ onSubmit, loading }) {
         >
           {INCOME_BANDS.map((band) => (
             <option key={band} value={band}>
-              {band}
+              {band} Lakhs
             </option>
           ))}
         </select>
       </div>
 
       {clientErrors.length > 0 && (
-        <ul className="error-list">
-          {clientErrors.map((err, i) => (
-            <li key={i}>{err}</li>
-          ))}
-        </ul>
+        <div className="error-alert">
+          <ul className="error-ul">
+            {clientErrors.map((err, i) => (
+              <li key={i}>{err}</li>
+            ))}
+          </ul>
+        </div>
       )}
 
-      <button type="submit" className="submit-btn" disabled={loading}>
-        {loading ? "Scoring..." : "Calculate Score"}
+      <button type="submit" className="submit-button" disabled={loading}>
+        {loading ? (
+          <span className="loading-row">
+            <span className="loading-spinner"></span>
+            Scoring...
+          </span>
+        ) : (
+          <span>Calculate Credit Score</span>
+        )}
       </button>
     </form>
   );

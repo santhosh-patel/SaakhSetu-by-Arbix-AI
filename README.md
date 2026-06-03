@@ -69,6 +69,7 @@ curl -s -X POST http://localhost:8000/score \
 | Crop risk | 15 | Low → 15, Medium → 10, High → 5 |
 
 **Crop Risk Classification:**
+
 - **Low risk**: wheat, paddy, rice, barley, ragi, jowar
 - **Medium risk**: maize, mustard, cotton, soybean, groundnut
 - **High risk**: all other crops
@@ -86,6 +87,7 @@ curl -s -X POST http://localhost:8000/score \
 
 - **SQLite Audit Persistence**: Every scoring request is persisted to `saakhsetu.db` (configurable via `SAAKHSETU_DB_PATH`).
 - **Enhanced Scoring**: Crop type risk factor incorporated as a 4th scoring dimension (15 pts max).
+- **Dribbble Light Theme**: Re-styled to a clean warm clay aesthetic with an enlarged 175px credit score gauge and a dropdown select for Telangana's top 10 crops.
 - **Expanded Tests**: 9 pytest cases including crop risk tier tests and SQLite audit verification.
 
 ### Phase 1

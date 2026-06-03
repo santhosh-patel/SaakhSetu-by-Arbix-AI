@@ -36,3 +36,7 @@ Crop risk classification uses a hardcoded set of known crops rather than a datab
 
 SQLite was chosen for audit persistence because it requires zero external infrastructure, is built into Python's standard library, and is sufficient for single-instance deployments. The `SAAKHSETU_DB_PATH` env var allows test isolation by pointing to a separate file.
 
+### UI Refinement
+
+The frontend was updated to a clean, light Dribbble-style theme using a warm clay-white background, deep slate text, and a larger 175px score gauge. Crop input was converted to a select dropdown featuring Telangana's top 10 crops, and explanation panels were organized into elegant, bento-style side-by-side cards below the calculator.
+
