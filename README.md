@@ -14,7 +14,7 @@ pip install -r requirements.txt
 uvicorn app.main:app --reload --port 8000
 ```
 
-API docs: http://localhost:8000/docs
+API docs: <http://localhost:8000/docs>
 
 ### Frontend
 
@@ -24,7 +24,7 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:5173 — ensure the backend is running on port 8000.
+Open <http://localhost:5173> — ensure the backend is running on port 8000.
 
 ### Tests
 
@@ -57,51 +57,31 @@ curl -s -X POST http://localhost:8000/score \
 | Audit log | Structured JSON to stdout | Meets spec without DB complexity; safe for non-PII agricultural fields |
 | Income bands | ASCII hyphens (`2-5L`, `5-10L`) | Practical keyboard/API input; spec shows en-dashes but ASCII avoids copy-paste issues |
 | `crop_type` | Validated, not scored | Accepted per spec; extension point for crop-risk rules |
-| Persistence | None | Time-box focus on core requirements |
+| Persistence | None | Focus on core Phase 1 requirements |
 
 ## Tradeoffs
 
-- **No database** — audit logs go to stdout only; sufficient for the exercise.
+- **No database** — audit logs go to stdout only; sufficient for Phase 1.
 - **crop_type not in score** — keeps exactly three reason codes from the three weighted factors.
 - **ASCII vs en-dash income bands** — documented; frontend and backend use the same enum values.
-- **No Docker** — skipped to complete tests and frontend within time-box.
+- **No Docker** — deferred beyond Phase 1 scope.
 
-## Time-box (IST)
+## Phase 1 Release Plan
 
-| | |
-|---|---|
-| **Start** | 2026-06-03 ~19:00 IST |
-| **End** | 2026-06-03 ~20:30 IST |
-| **Approx. total** | ~90 minutes |
+This repository contains the Phase 1 release of the application featuring the minimal core API features and a basic frontend.
 
-### Completed
+### Completed Scope
 
-- `POST /score` with validation, rule-based scoring, 3 reason codes
-- Structured audit logging
-- 5 pytest cases (happy path + validation errors)
-- React form, loading state, client + server error handling
-- README and LLM_NOTES
+- **API Endpoint (`POST /score`)**: Web service built with FastAPI and Pydantic v2 incorporating input validation, rule-based credit scoring, and exactly three reason codes.
+- **Audit Logging**: Structured JSON logging to stdout for tracking score evaluations.
+- **Testing**: 5 pytest test cases verifying successful scoring and detailed input validation error states.
+- **Basic Frontend**: A clean React form showing loading/submitting state and backend validation errors.
+- **Documentation**: Simple setup, run guides, and design tradeoff notes.
 
-### Skipped
+## Future Roadmap / Phase 2 Planning
 
-- Docker / docker-compose
-- SQLite persistence
-- Drift-check endpoint
-- Linting/formatting setup (ruff, prettier)
-
-## What I Would Do With 2 More Hours
-
-1. SQLite audit persistence with a simple `score_requests` table
-2. `docker-compose.yml` for one-command local run
-3. Playwright e2e test (form submit → score displayed)
-4. `crop_type` factor in scoring (e.g. cash crop vs food crop)
-5. GitHub Actions CI running pytest on push
-
-## LLM / Tool Disclosure
-
-| Tool | Usage |
-|------|-------|
-| Cursor (Composer) | Scaffolded project structure, backend modules, frontend components, tests, and docs from the exercise spec |
+1. **SQLite Audit Persistence**: Store credit scoring request and response history in a database.
+2. **Enhanced Scoring**: Incorporate crop type risk factors into the overall credit score model.
 
 **Personally verified:**
 
