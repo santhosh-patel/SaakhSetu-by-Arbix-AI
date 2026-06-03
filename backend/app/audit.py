@@ -20,6 +20,7 @@ def log_score_request(
     payload: ScoreRequest,
     score: float,
     reason_codes: list[str],
+    contributions: dict[str, float],
 ) -> None:
     """Structured audit log for every scoring request (non-PII fields only).
 
@@ -37,6 +38,7 @@ def log_score_request(
         "annual_income_band": payload.annual_income_band.value,
         "score": score,
         "reason_codes": reason_codes,
+        "contributions": contributions,
         "logged_at": logged_at,
     }
     logger.info(json.dumps(record))
@@ -51,5 +53,6 @@ def log_score_request(
         annual_income_band=payload.annual_income_band.value,
         score=score,
         reason_codes=reason_codes,
+        contributions=contributions,
         logged_at=logged_at,
     )

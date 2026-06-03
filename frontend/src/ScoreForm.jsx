@@ -22,7 +22,7 @@ const INITIAL = {
   annual_income_band: "2-5L",
 };
 
-export function validateForm(form) {
+function validateForm(form) {
   const errors = [];
 
   const land = parseFloat(form.land_area_acres);
@@ -119,7 +119,19 @@ export default function ScoreForm({ onSubmit, loading }) {
       <div className="form-field">
         <div className="slider-label-row">
           <label htmlFor="repayment_history_score">Repayment Score</label>
-          <span className="slider-value">{form.repayment_history_score} / 100</span>
+          <div className="manual-input-wrapper">
+            <input
+              type="number"
+              min="0"
+              max="100"
+              name="repayment_history_score"
+              value={form.repayment_history_score}
+              onChange={handleChange}
+              disabled={loading}
+              className="manual-score-input"
+            />
+            <span className="manual-score-suffix">/ 100</span>
+          </div>
         </div>
         <input
           id="repayment_history_score"
@@ -132,6 +144,9 @@ export default function ScoreForm({ onSubmit, loading }) {
           onChange={handleChange}
           disabled={loading}
           className="slider-input"
+          style={{
+            background: `linear-gradient(to right, transparent ${form.repayment_history_score}%, #e6e5e0 ${form.repayment_history_score}%), linear-gradient(to right, var(--accent-red) 0%, var(--accent-gold) 50%, var(--accent-green) 100%)`
+          }}
         />
         <div className="slider-ticks">
           <span>Weak</span>

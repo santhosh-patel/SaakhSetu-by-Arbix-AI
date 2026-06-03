@@ -20,3 +20,16 @@ export async function submitScore(formData) {
 
   return data;
 }
+
+export function formatApiErrors(detail) {
+  if (!detail) return ["Request failed. Please try again."];
+  if (typeof detail === "string") return [detail];
+  if (Array.isArray(detail)) {
+    return detail.map((err) => {
+      const field = err.loc ? err.loc.filter((p) => p !== "body").join(".") : "";
+      const msg = err.msg || JSON.stringify(err);
+      return field ? `${field}: ${msg}` : msg;
+    });
+  }
+  return ["Request failed. Please try again."];
+}

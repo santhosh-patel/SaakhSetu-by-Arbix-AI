@@ -31,4 +31,5 @@ class ScoreResponse(BaseModel):
     request_id: str
     score: float = Field(ge=0, le=100)
     reason_codes: list[str]
+    contributions: dict[str, float]
     timestamp: str

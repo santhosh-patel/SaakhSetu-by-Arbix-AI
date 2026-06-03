@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS audit_logs (
     annual_income_band    TEXT    NOT NULL,
     score                 REAL    NOT NULL,
     reason_codes          TEXT    NOT NULL,
+    contributions         TEXT    NOT NULL DEFAULT '{}',
     logged_at             TEXT    NOT NULL
 );
 """
@@ -42,6 +43,12 @@ def init_db() -> None:
     """Create the audit_logs table if it does not exist."""
     with _get_connection() as conn:
         conn.execute(_CREATE_TABLE)
+        # Dynamic check to ensure backward compatibility with older local databases
+        cursor = conn.cursor()
+        cursor.execute("PRAGMA table_info(audit_logs)")
+        columns = [row[1] for row in cursor.fetchall()]
+        if "contributions" not in columns:
+            cursor.execute("ALTER TABLE audit_logs ADD COLUMN contributions TEXT NOT NULL DEFAULT '{}'")
 
 
 def save_audit_log(
@@ -53,6 +60,7 @@ def save_audit_log(
     annual_income_band: str,
     score: float,
     reason_codes: list[str],
+    contributions: dict[str, float],
     logged_at: str,
 ) -> None:
     """Insert one audit record into the database."""
@@ -62,8 +70,8 @@ def save_audit_log(
             INSERT INTO audit_logs
                 (request_id, timestamp, land_area_acres, crop_type,
                  repayment_history_score, annual_income_band, score,
-                 reason_codes, logged_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                 reason_codes, contributions, logged_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 request_id,
@@ -74,6 +82,7 @@ def save_audit_log(
                 annual_income_band,
                 score,
                 json.dumps(reason_codes),
+                json.dumps(contributions),
                 logged_at,
             ),
         )

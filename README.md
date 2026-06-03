@@ -88,6 +88,8 @@ curl -s -X POST http://localhost:8000/score \
 - **SQLite Audit Persistence**: Every scoring request is persisted to `saakhsetu.db` (configurable via `SAAKHSETU_DB_PATH`).
 - **Enhanced Scoring**: Crop type risk factor incorporated as a 4th scoring dimension (15 pts max).
 - **Dribbble Light Theme**: Re-styled to a clean warm clay aesthetic with an enlarged 175px credit score gauge and a dropdown select for Telangana's top 10 crops.
+- **Score Explainability Dashboard**: Interactive horizontal progress bars showing points contributions, animated with CSS slide transitions.
+- **Advanced Slider Controls**: Enlarged the repayment history slider input and added a synced manual numeric input box.
 - **Expanded Tests**: 9 pytest cases including crop risk tier tests and SQLite audit verification.
 
 ### Phase 1

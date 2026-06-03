@@ -40,12 +40,13 @@ def score(payload: ScoreRequest) -> ScoreResponse:
     request_id = str(uuid.uuid4())
     timestamp = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
-    score_value, reason_codes = compute_score(payload)
-    log_score_request(request_id, timestamp, payload, score_value, reason_codes)
+    score_value, reason_codes, contributions = compute_score(payload)
+    log_score_request(request_id, timestamp, payload, score_value, reason_codes, contributions)
 
     return ScoreResponse(
         request_id=request_id,
         score=score_value,
         reason_codes=reason_codes,
+        contributions=contributions,
         timestamp=timestamp,
     )

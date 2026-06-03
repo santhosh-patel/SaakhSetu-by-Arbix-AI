@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { submitScore } from "./api";
+import { submitScore, formatApiErrors } from "./api";
 import ScoreForm from "./ScoreForm";
-import ScoreResult, { formatApiErrors } from "./ScoreResult";
+import ScoreResult from "./ScoreResult";
 import "./App.css";
 
 export default function App() {

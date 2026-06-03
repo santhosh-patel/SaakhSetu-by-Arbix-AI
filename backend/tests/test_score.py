@@ -24,6 +24,14 @@ def test_score_happy_path(client):
     crop_reasons = {"low_risk_crop", "medium_risk_crop", "high_risk_crop"}
     assert any(code in crop_reasons for code in data["reason_codes"])
 
+    assert "contributions" in data
+    contrib = data["contributions"]
+    assert "repayment_history" in contrib
+    assert "land_area" in contrib
+    assert "income_band" in contrib
+    assert "crop_risk" in contrib
+    assert sum(contrib.values()) == data["score"]
+
     uuid.UUID(data["request_id"])
     assert re.match(r"^\d{4}-\d{2}-\d{2}T", data["timestamp"])
 
@@ -103,7 +111,7 @@ def test_audit_persisted_to_sqlite(client):
 
     # Verify the latest row matches
     row = conn.execute(
-        "SELECT request_id, crop_type, score, reason_codes FROM audit_logs ORDER BY id DESC LIMIT 1"
+        "SELECT request_id, crop_type, score, reason_codes, contributions FROM audit_logs ORDER BY id DESC LIMIT 1"
     ).fetchone()
     conn.close()
 
@@ -114,3 +122,6 @@ def test_audit_persisted_to_sqlite(client):
 
     stored_reasons = json.loads(row[3])
     assert stored_reasons == data["reason_codes"]
+
+    stored_contrib = json.loads(row[4])
+    assert stored_contrib == data["contributions"]

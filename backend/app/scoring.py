@@ -19,7 +19,7 @@ def _crop_risk(crop_type: str) -> tuple[int, str]:
     return 5, "high_risk_crop"
 
 
-def compute_score(req: ScoreRequest) -> tuple[float, list[str]]:
+def compute_score(req: ScoreRequest) -> tuple[float, list[str], dict[str, float]]:
     """Rule-based scoring: repayment (35), land (25), income (25), crop risk (15)."""
     reason_codes: list[str] = []
 
@@ -61,5 +61,12 @@ def compute_score(req: ScoreRequest) -> tuple[float, list[str]]:
 
     score = min(100.0, max(0.0, float(repayment_pts + land_pts + income_pts + crop_pts)))
 
+    contributions = {
+        "repayment_history": float(repayment_pts),
+        "land_area": float(land_pts),
+        "income_band": float(income_pts),
+        "crop_risk": float(crop_pts),
+    }
+
     assert len(reason_codes) == 4, "Must return exactly 4 reason codes"
-    return score, reason_codes
+    return score, reason_codes, contributions

@@ -6,26 +6,31 @@ function scoreClass(score) {
   return "score-low";
 }
 
-export function formatApiErrors(detail) {
-  if (!detail) return ["Request failed. Please try again."];
-  if (typeof detail === "string") return [detail];
-  if (Array.isArray(detail)) {
-    return detail.map((err) => {
-      const field = err.loc ? err.loc.filter((p) => p !== "body").join(".") : "";
-      const msg = err.msg || JSON.stringify(err);
-      return field ? `${field}: ${msg}` : msg;
-    });
-  }
-  return ["Request failed. Please try again."];
-}
-
 export default function ScoreResult({ result, apiErrors, networkError, loading }) {
   const [animatedScore, setAnimatedScore] = useState(0);
+  const [animateBars, setAnimateBars] = useState(false);
+  const [prevResultId, setPrevResultId] = useState(null);
+
+  // Update states during render when result changes to reset animation states
+  if (result && result.request_id !== prevResultId) {
+    setPrevResultId(result.request_id);
+    setAnimateBars(false);
+    setAnimatedScore(0);
+  }
+
+  // Trigger progress bar animation after reset
+  useEffect(() => {
+    if (result && !animateBars) {
+      const timer = setTimeout(() => {
+        setAnimateBars(true);
+      }, 50);
+      return () => clearTimeout(timer);
+    }
+  }, [result, animateBars]);
 
   // Animate score counting up
   useEffect(() => {
     if (result && result.score !== undefined) {
-      setAnimatedScore(0);
       const duration = 750; // ms
       const start = 0;
       const end = result.score;
@@ -129,16 +134,61 @@ export default function ScoreResult({ result, apiErrors, networkError, loading }
         </svg>
       </div>
 
-      {/* Explainable Factor Details */}
+      {/* Explainable Factor Details (Dashboard) */}
       <div className="explanation-section-block">
         <h4 className="detail-title">Score Attribution</h4>
-        <div className="factor-chips-container">
-          {result.reason_codes.map((code) => (
-            <div key={code} className={`factor-chip ${currentScoreClass}`}>
-              <span className="dot-indicator"></span>
-              <span className="factor-code-name">{code}</span>
+        <div className="contribution-dashboard">
+          <div className="contribution-row">
+            <div className="contribution-meta">
+              <span className="factor-name">Repayment History</span>
+              <span className="factor-pts">{result.contributions.repayment_history} / 35 pts</span>
             </div>
-          ))}
+            <div className="bar-container">
+              <div
+                className={`bar-fill ${currentScoreClass}`}
+                style={{ width: `${animateBars ? (result.contributions.repayment_history / 35) * 100 : 0}%` }}
+              ></div>
+            </div>
+          </div>
+          
+          <div className="contribution-row">
+            <div className="contribution-meta">
+              <span className="factor-name">Land Size</span>
+              <span className="factor-pts">{result.contributions.land_area} / 25 pts</span>
+            </div>
+            <div className="bar-container">
+              <div
+                className={`bar-fill ${currentScoreClass}`}
+                style={{ width: `${animateBars ? (result.contributions.land_area / 25) * 100 : 0}%` }}
+              ></div>
+            </div>
+          </div>
+          
+          <div className="contribution-row">
+            <div className="contribution-meta">
+              <span className="factor-name">Income Bracket</span>
+              <span className="factor-pts">{result.contributions.income_band} / 25 pts</span>
+            </div>
+            <div className="bar-container">
+              <div
+                className={`bar-fill ${currentScoreClass}`}
+                style={{ width: `${animateBars ? (result.contributions.income_band / 25) * 100 : 0}%` }}
+              ></div>
+            </div>
+          </div>
+          
+          <div className="contribution-row">
+            <div className="contribution-meta">
+              <span className="factor-name">Crop Risk Rating</span>
+              <span className="factor-pts">{result.contributions.crop_risk} / 15 pts</span>
+            </div>
+            <div className="bar-container">
+              <div
+                className={`bar-fill ${currentScoreClass}`}
+                style={{ width: `${animateBars ? (result.contributions.crop_risk / 15) * 100 : 0}%` }}
+              ></div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -147,15 +197,15 @@ export default function ScoreResult({ result, apiErrors, networkError, loading }
         <h4 className="detail-title">Audit Log Trail</h4>
         <div className="meta-table">
           <div className="meta-table-row">
-            <span className="meta-key">Reference ID</span>
+            <span className="meta-key">Reference ID</span>{" "}
             <span className="meta-val monospace">{result.request_id}</span>
           </div>
           <div className="meta-table-row">
-            <span className="meta-key">Logged At</span>
+            <span className="meta-key">Logged At</span>{" "}
             <span className="meta-val">{new Date(result.timestamp).toLocaleTimeString()}</span>
           </div>
           <div className="meta-table-row">
-            <span className="meta-key">SQLite Write</span>
+            <span className="meta-key">SQLite Write</span>{" "}
             <span className="meta-val text-green">Success</span>
           </div>
         </div>

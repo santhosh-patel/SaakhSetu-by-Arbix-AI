@@ -40,3 +40,8 @@ SQLite was chosen for audit persistence because it requires zero external infras
 
 The frontend was updated to a clean, light Dribbble-style theme using a warm clay-white background, deep slate text, and a larger 175px score gauge. Crop input was converted to a select dropdown featuring Telangana's top 10 crops, and explanation panels were organized into elegant, bento-style side-by-side cards below the calculator.
 
+### Score Explainability & Slider Enhancements
+
+- **Explainability Dashboard**: Replaced or augmented simple reason chips with animated horizontal progress bars showing explicit point allocations.
+- **Enlarged Slider + Manual Entry**: Thicker slider track (6px) and wider thumb (20px) next to a synced numeric manual score entry box for maximum input control.
+
